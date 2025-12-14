@@ -1,0 +1,13 @@
+{
+  "name": "Curso ESP32",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "platformio.platformio-ide",
+        "wokwi.wokwi-vscode"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install -U platformio"
+}

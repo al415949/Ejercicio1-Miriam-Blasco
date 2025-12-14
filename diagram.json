@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-esp32-devkit-v1", "id": "esp", "top": -84.19, "left": 10.81, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd1",
+      "top": -65.71,
+      "left": 191.17,
+      "attrs": { "pins": "i2c" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 159.41,
+      "left": 90.34,
+      "attrs": { "color": "green" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn2",
+      "top": 233.49,
+      "left": 93.62,
+      "attrs": { "color": "white" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn3",
+      "top": 303.8,
+      "left": 96,
+      "attrs": { "color": "red" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "label1",
+      "top": 163.66,
+      "left": 181.56,
+      "attrs": { "text": "Nueva partida" }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "label2",
+      "top": 239.14,
+      "left": 185.43,
+      "attrs": { "text": "Carta " }
+    },
+    {
+      "type": "wokwi-text",
+      "id": "label3",
+      "top": 310.32,
+      "left": 185.01,
+      "attrs": { "text": "Me planto " }
+    }
+  ],
+  "connections": [
+    [ "esp:TX0", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX0", "$serialMonitor:TX", "", [] ],
+    [ "lcd1:SDA", "esp:D21", "green", [ "h-49.47", "v150.31" ] ],
+    [ "lcd1:GND", "esp:GND.1", "black", [ "h-16.67", "v162.78" ] ],
+    [ "lcd1:VCC", "esp:3V3", "red", [ "h-8.13", "v196.73" ] ],
+    [ "lcd1:SCL", "esp:D22", "purple", [ "h-27.75", "v-44.32" ] ],
+    [ "btn1:1.l", "esp:D33", "green", [ "h-126.96", "v-6.6" ] ],
+    [ "esp:GND.1", "btn1:2.r", "black", [ "h55.59", "v126.6" ] ],
+    [ "btn2:1.l", "esp:D25", "green", [ "h-111.08", "v-241.11" ] ],
+    [ "esp:GND.1", "btn2:2.r", "black", [ "h57.32", "v204.79" ] ],
+    [ "esp:GND.1", "btn3:2.r", "black", [ "h58.04", "v270.66" ] ],
+    [ "esp:D26", "btn3:1.l", "green", [ "h-24.03", "v296.59", "h13.97" ] ]
+  ],
+  "dependencies": {}
+}
