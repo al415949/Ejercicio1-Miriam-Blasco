@@ -19,10 +19,10 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// Pines botones (si tu diagrama usa otros, cámbialos)
+// Pines botones (AJUSTA si tu diagrama usa otros)
 const int PIN_NUEVA  = 25;
-const int PIN_CARTA  = 26;
-const int PIN_PLANTO = 33;
+const int PIN_CARTA  = 33;
+const int PIN_PLANTO = 32;
 
 int antNueva  = HIGH;
 int antCarta  = HIGH;
@@ -37,10 +37,24 @@ char estado2letra(const char* e) {
   return ' ';
 }
 
-void dibujarCabecera() {
+// Imprime un campo fijo: recorta y rellena con espacios (para que no queden restos)
+void printFixed(uint8_t col, uint8_t row, uint8_t width, const char* txt) {
+  lcd.setCursor(col, row);
+  for (uint8_t i = 0; i < width; i++) {
+    char c = (txt && txt[i]) ? txt[i] : ' ';
+    lcd.print(c);
+    if (!txt || !txt[i]) {
+      // rellena el resto con espacios
+      for (uint8_t j = i + 1; j < width; j++) lcd.print(' ');
+      break;
+    }
+  }
+}
+
+void dibujarMarco() {
   lcd.setCursor(0,0); lcd.print("C: ");
-  lcd.setCursor(12,0); lcd.print("$:");
   lcd.setCursor(0,1); lcd.print("J: ");
+  lcd.setCursor(12,0); lcd.print("$:");
 }
 
 void enviarAccion(const char* accion) {
@@ -65,13 +79,25 @@ void callback(char* topic, byte* payload, unsigned int length) {
   const char* est  = doc["estado"]  | "";
   int fondos        = doc["fondos"]  | 0;
 
-  lcd.clear();
-  dibujarCabecera();
+  dibujarMarco();
 
-  lcd.setCursor(3,0);  lcd.print(crup);
-  lcd.setCursor(14,0); lcd.print(fondos);
-  lcd.setCursor(3,1);  lcd.print(jug);
-  lcd.setCursor(15,1); lcd.print(estado2letra(est));
+  // Cartas: columnas 3..11 (9 chars). Así nunca pisan $ ni estado.
+  printFixed(3, 0, 9, crup);   // C:
+  printFixed(3, 1, 12, jug);   // J: (3..14) -> NO pisa col 15
+
+  // Fondos: justo a la derecha de "$:" (col 14..15) o puedes usar 3-4 si quieres
+  // Aquí lo ponemos en col 14 con 2 caracteres (si quieres 3, mueve $: a col 11)
+  char money[8];
+  snprintf(money, sizeof(money), "%d", fondos);
+  printFixed(14, 0, 2, money);
+
+  // Estado SIEMPRE en la última columna
+  lcd.setCursor(15, 1);
+  lcd.print(estado2letra(est));
+
+  // Debug útil
+  Serial.print("RX "); Serial.print(topic); Serial.print(" -> ");
+  Serial.println(est);
 }
 
 void conectarWiFi() {
@@ -111,7 +137,7 @@ void setup() {
   conectarMQTT();
 
   lcd.clear();
-  dibujarCabecera();
+  dibujarMarco();
 }
 
 void loop() {
@@ -121,8 +147,8 @@ void loop() {
   int bCarta  = digitalRead(PIN_CARTA);
   int bPlanto = digitalRead(PIN_PLANTO);
 
-  if (bNueva == LOW && antNueva == HIGH)  enviarAccion("nueva");
-  if (bCarta == LOW && antCarta == HIGH)  enviarAccion("carta");
+  if (bNueva == LOW && antNueva == HIGH)   enviarAccion("nueva");
+  if (bCarta == LOW && antCarta == HIGH)   enviarAccion("carta");
   if (bPlanto == LOW && antPlanto == HIGH) enviarAccion("planto");
 
   antNueva  = bNueva;
