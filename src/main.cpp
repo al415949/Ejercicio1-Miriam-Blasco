@@ -147,6 +147,11 @@ void loop() {
   int bCarta  = digitalRead(PIN_CARTA);
   int bPlanto = digitalRead(PIN_PLANTO);
 
+  if (bNueva == LOW)  Serial.println("BOTON NUEVA (pin 33)");
+  if (bCarta == LOW)  Serial.println("BOTON CARTA (pin 25)");
+  if (bPlanto == LOW) Serial.println("BOTON PLANTO (pin 26)");
+  delay(200);
+
   if (bNueva == LOW && antNueva == HIGH)   enviarAccion("nueva");
   if (bCarta == LOW && antCarta == HIGH)   enviarAccion("carta");
   if (bPlanto == LOW && antPlanto == HIGH) enviarAccion("planto");
