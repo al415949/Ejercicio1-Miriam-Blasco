@@ -21,8 +21,8 @@ PubSubClient client(espClient);
 
 // Pines botones (AJUSTA si tu diagrama usa otros)
 const int PIN_NUEVA  = 33;
-const int PIN_CARTA  = 32;
-const int PIN_PLANTO = 25;
+const int PIN_CARTA  = 25;
+const int PIN_PLANTO = 26;
 
 int antNueva  = HIGH;
 int antCarta  = HIGH;
