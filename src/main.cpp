@@ -4,9 +4,7 @@
 #include <ArduinoJson.h>
 #include <PubSubClient.h>
 
-// ===== CAMBIA SOLO ESTO =====
-const char* jugador = "miriam";   // nombre único (sin espacios)
-// ============================
+const char* jugador = "miriam"; 
 
 const char* mqttServer = "test.mosquitto.org";
 const int mqttPort = 1883;
@@ -19,7 +17,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// Pines botones (AJUSTA si tu diagrama usa otros)
+
 const int PIN_NUEVA  = 33;
 const int PIN_CARTA  = 25;
 const int PIN_PLANTO = 26;
@@ -37,14 +35,13 @@ char estado2letra(const char* e) {
   return ' ';
 }
 
-// Imprime un campo fijo: recorta y rellena con espacios (para que no queden restos)
 void printFixed(uint8_t col, uint8_t row, uint8_t width, const char* txt) {
   lcd.setCursor(col, row);
   for (uint8_t i = 0; i < width; i++) {
     char c = (txt && txt[i]) ? txt[i] : ' ';
     lcd.print(c);
     if (!txt || !txt[i]) {
-      // rellena el resto con espacios
+    
       for (uint8_t j = i + 1; j < width; j++) lcd.print(' ');
       break;
     }
@@ -81,21 +78,20 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
   dibujarMarco();
 
-  // Cartas: columnas 3..11 (9 chars). Así nunca pisan $ ni estado.
+  // Cartas: columnas 3..11 (9 chars). 
   printFixed(3, 0, 9, crup);   // C:
-  printFixed(3, 1, 12, jug);   // J: (3..14) -> NO pisa col 15
+  printFixed(3, 1, 12, jug);   // J: 
 
-  // Fondos: justo a la derecha de "$:" (col 14..15) o puedes usar 3-4 si quieres
-  // Aquí lo ponemos en col 14 con 2 caracteres (si quieres 3, mueve $: a col 11)
+ 
   char money[8];
   snprintf(money, sizeof(money), "%d", fondos);
   printFixed(14, 0, 2, money);
 
-  // Estado SIEMPRE en la última columna
+ 
   lcd.setCursor(15, 1);
   lcd.print(estado2letra(est));
 
-  // Debug útil
+  
   Serial.print("RX "); Serial.print(topic); Serial.print(" -> ");
   Serial.println(est);
 }
